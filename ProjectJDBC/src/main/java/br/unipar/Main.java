@@ -76,18 +76,18 @@ public class Main {
     }
     public static void listarTodosUsuarios(){
         try{
-            Connection connect = connection();
+            Connection connect = connection();// inicia conexão com o banco de dados
 
             Statement statement = connect.createStatement();
 
-            ResultSet result = statement.executeQuery("SELECT * FROM usuarios");
+            ResultSet result = statement.executeQuery("SELECT * FROM usuarios"); //armazena valor recebido pela requisição informada no campo
 
-            while(result.next()){
+            while(result.next()){//enquanto tiver resultados, executa print result.getInt("codigo")
                 System.out.println(result.getInt("codigo"));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e);//tratamento de erro para falha de conexão de banco dados.
         }
     }
 }
