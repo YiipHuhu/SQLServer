@@ -1,9 +1,6 @@
 package br.unipar;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Main {
     private static final String url = "jdbc:postgresql://localhost:5432/Exemplo1";
@@ -12,6 +9,8 @@ public class Main {
 
     public static void main(String[] args) {
         createTable();
+        //inserirUsuario("Taffe","12345", "Fabio", "1500-01-01");
+        listarTodosUsuarios();
     }
 
     public static Connection connection() throws SQLException {
@@ -39,6 +38,7 @@ public class Main {
             exception.printStackTrace();
         }
     }
+
     public static void dropTable() {
         try {
             Connection connect = connection();// tenta estabelecer conexao com o banco de dados
@@ -50,6 +50,44 @@ public class Main {
             System.out.println("Sua tabela foi deletada");
         } catch (SQLException exception) { // caso nao seja possivel realizar a conexao com o banco de dados
             exception.printStackTrace();
+        }
+    }
+
+    public static void inserirUsuario(String username, String password, String nome, String dataNascimento) {
+        try {
+            Connection connect = connection();
+
+            PreparedStatement prepared = connect.prepareStatement("INSERT INTO usuarios(username, password, nome, nascimento)"
+                    + "VALUES (?,?,?,?)"
+            );
+            prepared.setString(1, username);
+            prepared.setString(2, password);
+            prepared.setString(3, nome);
+            prepared.setDate(4, java.sql.Date.valueOf(dataNascimento));
+            //prepared.setDate();
+            //prepared.setInt();
+
+            prepared.executeUpdate();
+
+            System.out.println("Valor inserido na tabela: ");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void listarTodosUsuarios(){
+        try{
+            Connection connect = connection();
+
+            Statement statement = connect.createStatement();
+
+            ResultSet result = statement.executeQuery("SELECT * FROM usuarios");
+
+            while(result.next()){
+                System.out.println(result.getInt("codigo"));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }
