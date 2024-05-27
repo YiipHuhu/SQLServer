@@ -1,17 +1,12 @@
 package br.unipar;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
     private static final String url = "jdbc:postgresql://localhost:5432/Exemplo1";
     private static final String user = "postgres";
     private static final String password = "admin123";
-
-    public static void main(String[] args) {
-        createTable();
-        //inserirUsuario("Taffe","12345", "Fabio", "1500-01-01");
-        listarTodosUsuarios();
-    }
 
     public static Connection connection() throws SQLException {
         //localhost : Banco hospedado localmente
@@ -52,6 +47,27 @@ public class Main {
             exception.printStackTrace();
         }
     }
+    public static void cadastrarUsuario() {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Digite o username: ");
+        String username = sc.nextLine();
+
+        System.out.print("Digite a senha: ");
+        String password = sc.nextLine();
+
+        System.out.print("Digite o nome completo: ");
+        String nome = sc.nextLine();
+
+        System.out.print("Digite a data de nascimento (formato yyyy-mm-dd): ");
+        String dataNascimento = sc.nextLine();
+
+        try {
+            inserirUsuario(username, password, nome, dataNascimento);
+        } catch (RuntimeException e) {
+            System.err.println("Erro ao inserir usuário: " + e.getMessage());
+        }
+    }
 
     public static void inserirUsuario(String username, String password, String nome, String dataNascimento) {
         try {
@@ -63,7 +79,7 @@ public class Main {
             prepared.setString(1, username);
             prepared.setString(2, password);
             prepared.setString(3, nome);
-            prepared.setDate(4, java.sql.Date.valueOf(dataNascimento));
+            prepared.setDate(4, java.sql.Date.valueOf(dataNascimento));//padrao americano de data Ano-Mes-Dia
             //prepared.setDate();
             //prepared.setInt();
 
@@ -83,8 +99,29 @@ public class Main {
             ResultSet result = statement.executeQuery("SELECT * FROM usuarios"); //armazena valor recebido pela requisição informada no campo
 
             while(result.next()){//enquanto tiver resultados, executa print result.getInt("codigo")
-                System.out.println(result.getInt("codigo"));
+                System.out.print(result.getInt("codigo"));
+                System.out.printf(" - ");
+                System.out.print(result.getString("username"));
+                System.out.println();
             }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);//tratamento de erro para falha de conexão de banco dados.
+        }
+    }
+    public static void editarTabela(String tabela, String coluna, String novovalor){
+        try{
+            Connection connect = connection();// inicia conexão com o banco de dados
+            listarTodosUsuarios();
+            Statement statement = connect.createStatement();
+
+            PreparedStatement prepared = connect.prepareStatement("UPDATE (?)" +
+                    "    SET (?) = valor1" +
+                    "    WHERE id = 2"
+            );
+            prepared.setString(1, tabela);
+            prepared.setString(2, coluna);
+            prepared.setString(3, novovalor);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);//tratamento de erro para falha de conexão de banco dados.
