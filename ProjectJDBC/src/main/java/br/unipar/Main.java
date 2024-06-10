@@ -109,19 +109,22 @@ public class Main {
             throw new RuntimeException(e);//tratamento de erro para falha de conexão de banco dados.
         }
     }
-    public static void editarTabela(String tabela, String coluna, String novovalor){
-        try{
-            Connection connect = connection();// inicia conexão com o banco de dados
-            listarTodosUsuarios();
-            Statement statement = connect.createStatement();
+public static void editarTabela(String tabela, String coluna, String novoValor, String codigo, int id) {
 
-            PreparedStatement prepared = connect.prepareStatement("UPDATE (?)" +
-                    "    SET (?) = valor1" +
-                    "    WHERE id = 2"
+
+        try {
+            Connection connect = connection();// inicia conexão com o banco de dados
+
+            PreparedStatement prepared = connect.prepareStatement("UPDATE  " + tabela +
+                    "    SET " +  coluna + " = ? " +
+                    "    WHERE " + codigo + " = ?"
             );
-            prepared.setString(1, tabela);
-            prepared.setString(2, coluna);
-            prepared.setString(3, novovalor);
+
+            prepared.setString(1, novoValor);
+            prepared.setInt(2, id);
+            prepared.executeUpdate();
+
+            System.out.println("Alterado!");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);//tratamento de erro para falha de conexão de banco dados.
